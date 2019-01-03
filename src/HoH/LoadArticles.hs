@@ -1,5 +1,7 @@
 module HoH.LoadArticles where
 
+import Text.Read (readMaybe)
+import System.IO
 import Network.HTTP.Conduit (simpleHttp)
 import qualified Data.ByteString.Lazy.Char8 as L
 
@@ -9,8 +11,13 @@ url = "https://www.theguardian.com/games/2018/dec/11/the-11-best-games-on-playst
 -- Alternative:
 -- output = L.putStrLn . L.take 500 =<< simpleHttp url
 
+
+
 output = do
     bytes <- simpleHttp url
     -- L.putStrLn (L.take 500 bytes)
     L.putStrLn (bytes)
+    handle <- openFile "playstation.html" WriteMode
+    hPutStrLn handle $ L.unpack bytes
+    hClose handle
 
