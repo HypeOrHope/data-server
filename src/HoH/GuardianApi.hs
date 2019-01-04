@@ -13,10 +13,9 @@ import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 
 
-data Article = Article
+data ApiArticle = ApiArticle
   { aid        :: String
   , atitle     :: String
-  , atext      :: String
   , adate      :: String
   , asection   :: String
   , aurl       :: String
@@ -62,12 +61,11 @@ callcCallNumber a b
 ------------- Ende Daten einlesen  --------------------------------
 
 ------------- Daten formatieren. Von IO [Content] -> [Article]------
-hohFormat :: Content -> Article
-hohFormat c = Article
+hohFormat :: Content -> ApiArticle
+hohFormat c = ApiArticle
   {
     aid = Text.unpack $ unContentId (contentId c)
   , atitle = Text.unpack $ webTitle c
-  , atext  = ""
   , adate  = show $ webPublicationDate c
   , asection = getSection (section c)
   , aurl =  Text.unpack (unURL (webUrl c))
@@ -78,7 +76,7 @@ getSection sec = case sec of
   Just s -> Text.unpack (name s)
   Nothing ->  ""
 
-printArticle :: Article -> IO  ()
+printArticle :: ApiArticle -> IO  ()
 printArticle art = do
   _ <- putStrLn $ "Id: " ++ (aid art)
   _ <- putStrLn $ "Title: " ++ (atitle art)
@@ -92,7 +90,7 @@ printArticle art = do
 ------------- Volständige Funktion zum Einlesen und Parsen--------------
 
 
-getArticleByKeyword :: String -> IO [Article]
+getArticleByKeyword :: String -> IO [ApiArticle]
 getArticleByKeyword key = do
   contents <- getAll (Text.pack key)
   let arts =  map hohFormat contents
