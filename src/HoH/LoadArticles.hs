@@ -14,6 +14,7 @@ type Url = String
 -- the URL we're going to search
 myurl :: Url
 myurl = "https://www.theguardian.com/games/2018/dec/11/the-11-best-games-on-playstation-vr"
+url2 = "https://www.theguardian.com/sport/2019/jan/04/cash-dispute-could-see-catalan-dragons-not-defend-challenge-cup-crown-rugby-league"
 
 makePath :: Url -> FilePath
 makePath url = ("data/html/" ++ [ if c == '/' then '_' else c | c <- drop 8 url ] ++ ".html")
