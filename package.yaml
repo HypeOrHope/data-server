@@ -22,10 +22,14 @@ description: Please see the README on GitHub at <https://github.com/Andruschenko
 dependencies:
   - base >= 4.7 && < 5
   - bytestring
+  - html-conduit
   - http-conduit
   - directory
   - guardian-content-api-client
   - text
+  - scotty
+  - text
+  - xml-conduit
 
 library:
   source-dirs: src
