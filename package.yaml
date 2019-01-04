@@ -24,6 +24,8 @@ dependencies:
   - bytestring
   - http-conduit
   - directory
+  - guardian-content-api-client
+  - text
 
 library:
   source-dirs: src
