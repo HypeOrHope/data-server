@@ -24,3 +24,4 @@ cabal.project.local~
 
 # Custom
 data-server.cabal
+data/
