@@ -3,12 +3,14 @@
 
 module Analysis where
 
+import           Control.Concurrent.Async
 import           Data.ByteString (ByteString)
 import           Data.Foldable (for_)
 import qualified Data.ByteString as BS
 import qualified Data.Text as T
 import           Say (say)
 import           System.Directory (doesFileExist)
+import           UnliftIO.Async (pooledForConcurrentlyN_)
 
 import GuardianApi (getArticlesByKeyword)
 import LoadArticles (makePath, downloadHtml)
@@ -23,10 +25,10 @@ runAnalysis = do
         , "artificial intelligence"
         ]
 
-  for_ keywords $ \keywords -> do
+  pooledForConcurrentlyN_ 4 keywords $ \keywords -> do
     articleList <- getArticlesByKeyword keywords
 
-    for_ articleList $ \ApiArticle{ aurl } -> do
+    pooledForConcurrentlyN_ 100 articleList $ \ApiArticle{ aurl } -> do
 
       let path = makePath aurl
       exists <- doesFileExist path

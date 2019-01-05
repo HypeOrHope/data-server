@@ -1,5 +1,6 @@
 resolver: lts-12.22
 extra-deps:
+  - unliftio-0.2.10
   - git: https://github.com/MartinRell/content-api-haskell-client.git
     commit: 8e2f95d1d695ccf774259af607742440d74573de
     subdirs:
