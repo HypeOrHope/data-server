@@ -3,7 +3,6 @@
 
 module Analysis where
 
-import           Control.Concurrent.Async
 import           Data.ByteString (ByteString)
 import           Data.Foldable (for_)
 import qualified Data.ByteString as BS

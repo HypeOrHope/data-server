@@ -10,6 +10,7 @@ import Network.Guardian.ContentApi.Content
 import Network.Guardian.ContentApi.URL
 import Network.Guardian.ContentApi.Section -- für section
 import Network.Guardian.ContentApi.URL -- für unURL
+import UnliftIO.Async (pooledForConcurrentlyN)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 
@@ -32,7 +33,7 @@ getAll keyword = do
   let firstPageContentsList = results response
   let numberOfPages = callcCallNumber (totalResults response) downloadPageSize
 
-  listOfListOfContents <- for [2..numberOfPages] $ \pageNo -> do
+  listOfListOfContents <- pooledForConcurrentlyN 100 [2..numberOfPages] $ \pageNo -> do
     response <- callApi keyword pageNo
     return (results response)
 
