@@ -17,6 +17,10 @@ import           Scraper (runScraper)
 import           Types (ApiArticle(..))
 
 
+showText :: (Show a) => a -> T.Text
+showText = T.pack . show
+
+
 runAnalysis :: IO ()
 runAnalysis = do
   let keywords =
@@ -30,9 +34,12 @@ runAnalysis = do
     say $ "Downloading articles for keyword: " <> T.pack keyword
     getArticlesByKeyword keyword
 
-  -- Now, download all article contents.
-  pooledForConcurrentlyN_ 100 allArticles $ \ApiArticle{ aurl } -> do
+  let numArticles = length allArticles
 
+  -- Now, download all article contents.
+  pooledForConcurrentlyN_ 100 (zip [1..] allArticles) $ \(i, ApiArticle{ aurl }) -> do
+
+    say $ "Progress: " <> showText i <> " / " <> showText numArticles
     cachedDownload "data/html" aurl
 
     -- page <- BS.readFile path
