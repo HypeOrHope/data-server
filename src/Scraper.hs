@@ -2,15 +2,14 @@
 
 module Scraper where
 
-import Text.Read (readMaybe)
-import System.IO
-import Network.HTTP.Conduit (simpleHttp)
-import Data.ByteString (ByteString)
+import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import Text.HTML.DOM (parseLBS)
-import Text.XML.Cursor (Cursor, attributeIs, content, element, fromDocument, child,
-  ($.//), ($//), (&|), (&//), (>=>), checkName)
+import           Network.HTTP.Conduit (simpleHttp)
+import           System.IO
+import           Text.HTML.DOM (parseLBS)
+import           Text.Read (readMaybe)
+import           Text.XML.Cursor (Cursor, attributeIs, content, element, fromDocument, child, ($.//), ($//), (&|), (&//), (>=>), checkName)
 
 import qualified Data.ByteString.Lazy.Char8 as L
 

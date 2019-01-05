@@ -2,17 +2,17 @@
 
 module GuardianApi where
 
-import Control.Monad
-import Control.Monad.IO.Class
-import Data.Traversable (for)
-import Network.Guardian.ContentApi
-import Network.Guardian.ContentApi.Content
-import Network.Guardian.ContentApi.URL
-import Network.Guardian.ContentApi.Section -- für section
-import Network.Guardian.ContentApi.URL -- für unURL
-import UnliftIO.Async (pooledForConcurrentlyN)
+import           Control.Monad
+import           Control.Monad.IO.Class
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
+import           Data.Traversable (for)
+import           Network.Guardian.ContentApi
+import           Network.Guardian.ContentApi.Content
+import           Network.Guardian.ContentApi.Section -- für section
+import           Network.Guardian.ContentApi.URL
+import           Network.Guardian.ContentApi.URL -- für unURL
+import           UnliftIO.Async (pooledForConcurrentlyN)
 
 
 import Types

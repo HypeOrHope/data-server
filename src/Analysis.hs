@@ -11,10 +11,10 @@ import           Say (say)
 import           System.Directory (doesFileExist)
 import           UnliftIO.Async (pooledForConcurrentlyN, pooledForConcurrentlyN_)
 
-import GuardianApi (getArticlesByKeyword)
-import LoadArticles (makePath, downloadHtml)
-import Scraper (runScraper)
-import Types (ApiArticle(..))
+import           Downloads (makePath, cachedDownload)
+import           GuardianApi (getArticlesByKeyword)
+import           Scraper (runScraper)
+import           Types (ApiArticle(..))
 
 
 runAnalysis :: IO ()
@@ -33,13 +33,7 @@ runAnalysis = do
   -- Now, download all article contents.
   pooledForConcurrentlyN_ 100 allArticles $ \ApiArticle{ aurl } -> do
 
-    let path = makePath aurl
-    exists <- doesFileExist path
-    if exists
-      then say $ "Using from cache: " <> T.pack aurl
-      else do
-        say $ "Fetching: " <> T.pack aurl
-        downloadHtml aurl
+    cachedDownload "data/html" aurl
 
     -- page <- BS.readFile path
     -- let texts = runScraper page
