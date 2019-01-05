@@ -1,10 +1,13 @@
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Analysis where
 
 import           Data.ByteString (ByteString)
 import           Data.Foldable (for_)
 import qualified Data.ByteString as BS
+import qualified Data.Text as T
+import           Say (say)
 import           System.Directory (doesFileExist)
 
 import GuardianApi (getArticlesByKeyword)
@@ -28,9 +31,9 @@ runAnalysis = do
       let path = makePath aurl
       exists <- doesFileExist path
       if exists
-        then putStrLn $ "Using from cache: " ++ aurl
+        then say $ "Using from cache: " <> T.pack aurl
         else do
-          putStrLn $ "Fetching: " ++ aurl
+          say $ "Fetching: " <> T.pack aurl
           downloadHtml aurl
 
       -- page <- BS.readFile path
