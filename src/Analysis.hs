@@ -37,37 +37,43 @@ runAnalysis = do
 
   -- First download all API results to build list of all articles
   -- to download before downloading any contents.
-  allArticles <- fmap deduplicate . fmap concat $ pooledForConcurrentlyN 4 keywords $ \keyword -> do
+  allArticlesWithKeywords <- fmap deduplicate . fmap concat $ pooledForConcurrentlyN 4 keywords $ \keyword -> do
     say $ "Downloading articles for keyword: " <> T.pack keyword
-    getArticlesByKeyword keyword
+    articles <- getArticlesByKeyword keyword
+    return [ (a, keyword) | a <- articles ]
 
-  let numArticles = length allArticles
+  let numArticles = length allArticlesWithKeywords
 
   -- Now, download all article contents.
-  pooledForConcurrentlyN_ 100 (zip [1..] allArticles) $ \(i, a@ApiArticle{ aurl }) -> do
+  pooledForConcurrentlyN_
+    100
+    (zip [1..] allArticlesWithKeywords)
+    $
+    \(i, (a@ApiArticle{ aurl }, keyword)) -> do
 
-    say $ "Progress: " <> showText i <> " / " <> showText numArticles
-    mPage <- cachedDownload "data/html" aurl
+      say $ "Progress: " <> showText i <> " / " <> showText numArticles
+      mPage <- cachedDownload "data/html" aurl
 
-    case mPage of
-      Nothing -> return ()
-      Just page -> do
-        let texts = runScraper page
+      case mPage of
+        Nothing -> return ()
+        Just page -> do
+          let texts = runScraper page
 
-        let text = T.unlines texts
+          let text = T.unlines texts
 
-        let path = "data/text/" ++ makePath aurl ++ ".txt"
-        createDirectoryIfMissing True (takeDirectory path)
-        T.writeFile path text
+          let path = "data/text/" ++ makePath aurl ++ ".txt"
+          createDirectoryIfMissing True (takeDirectory path)
+          T.writeFile path text
 
 
-        let ApiArticle{ atitle, adate, asection } = a
+          let ApiArticle{ atitle, adate, asection } = a
 
-        let metaPath = "data/meta/" ++ makePath aurl ++ ".txt"
-        createDirectoryIfMissing True (takeDirectory metaPath)
-        writeFile metaPath $ unlines
-          [ atitle
-          , adate
-          , asection
-          ]
+          let metaPath = "data/meta/" ++ makePath aurl ++ ".txt"
+          createDirectoryIfMissing True (takeDirectory metaPath)
+          writeFile metaPath $ unlines
+            [ atitle
+            , adate
+            , asection
+            , keyword
+            ]
 
