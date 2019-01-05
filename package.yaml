@@ -1,9 +1,9 @@
 name: data-server
 version: 0.1.0.0
-github: "Andruschenko/data-server"
+github: "HypeOrHope/data-server"
 license: BSD3
-author: "André Kovac"
-maintainer: "me[at]andrekovac.com"
+author: "André Kovac & Martin Rellmann & Jannik Buhr & Niklas Hambüchen"
+maintainer: "me[at]andrekovac.com & mail@nh2.me & jannik.m.buhr@gmail.com & martin.rell@hotmail.de"
 copyright: "MIT"
 
 extra-source-files:
@@ -21,12 +21,14 @@ description: Please see the README on GitHub at <https://github.com/Andruschenko
 
 dependencies:
   - base >= 4.7 && < 5
+  - async
   - bytestring
   - html-conduit
   - http-conduit
   - directory
   - guardian-content-api-client
   - text
+  - say
   - scotty
   - text
   - xml-conduit
