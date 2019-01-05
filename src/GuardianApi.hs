@@ -4,6 +4,7 @@ module GuardianApi where
 
 import Control.Monad
 import Control.Monad.IO.Class
+import Data.Traversable (for)
 import Network.Guardian.ContentApi
 import Network.Guardian.ContentApi.Content
 import Network.Guardian.ContentApi.URL
@@ -28,18 +29,15 @@ hohapiKey = "test"
 getAll :: Text.Text -> IO [Content]
 getAll keyword = do
   response <- callApi keyword 1
-  let contents = results response
-  -- TODO: Re-enable downloading ALL articles
-  let callNumber = 1 -- callcCallNumber (totalResults response) downloadPageSize
-  getAllHelper keyword 1 callNumber contents
+  let firstPageContentsList = results response
+  let numberOfPages = callcCallNumber (totalResults response) downloadPageSize
 
---          keyword  currentN totalN  bisherige
-getAllHelper :: Text.Text -> Int -> Int -> [Content] -> IO [Content]
-getAllHelper k cn tn cs
-  | cn == tn = pure cs
-  | otherwise = do
-      response <- callApi k cn
-      getAllHelper k (cn+1) tn $ cs ++ (results response)
+  listOfListOfContents <- for [2..numberOfPages] $ \pageNo -> do
+    response <- callApi keyword pageNo
+    return (results response)
+
+  let listOfContents = concat (firstPageContentsList:listOfListOfContents)
+  return listOfContents
 
 callApi :: Text.Text -> Int -> IO ContentSearchResult
 callApi keyword p = do
