@@ -1,4 +1,4 @@
-module HoH.LoadArticles where
+module LoadArticles where
 
 import Text.Read (readMaybe)
 import System.IO

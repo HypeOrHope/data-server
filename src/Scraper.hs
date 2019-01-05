@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}  -- Allow Strings for other objects similar to strings
 
-module HoH.LoadArticles where
+module Scraper where
 
 import Text.Read (readMaybe)
 import System.IO

@@ -1,7 +1,11 @@
 module Main where
 
-import HoH.Types
-import HoH.LoadArticles
+import Types
+import GuardianApi
+import LoadArticles
+import Scraper
+import Server
+
 
 main :: IO ()
-main = return ()
+main = putStrLn "Hello"

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module HoH.GuardianApi where
+module GuardianApi where
 
 import Control.Monad
 import Control.Monad.IO.Class
@@ -13,14 +13,7 @@ import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 
 
-data ApiArticle = ApiArticle
-  { aid        :: String
-  , atitle     :: String
-  , adate      :: String
-  , asection   :: String
-  , aurl       :: String
-  } deriving (Show, Read)
-
+import Types
 
 
 
