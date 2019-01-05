@@ -23,7 +23,7 @@ makePath url = [ if c == '/' then '_' else c | c <- drop 8 url ] ++ ".html"
 cachedDownload :: FilePath -> Url -> IO ()
 cachedDownload cacheDir url = do
 
-  let path = makePath (cacheDir ++ "/" ++ url)
+  let path = cacheDir ++ "/" ++ makePath url
 
   exists <- doesFileExist path
   if exists
