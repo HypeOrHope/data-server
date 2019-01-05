@@ -25,6 +25,7 @@ dependencies:
   - bytestring
   - html-conduit
   - http-conduit
+  - http-types
   - directory
   - guardian-content-api-client
   - text

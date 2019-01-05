@@ -1,15 +1,18 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Downloads where
 
+import           Control.Exception (try, throwIO)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as BSL8
 import qualified Data.Text as T
-import           Network.HTTP.Conduit (simpleHttp)
+import           Network.HTTP.Conduit (simpleHttp, HttpException(..), HttpExceptionContent(..), responseStatus)
 import           Say (say)
 import           System.Directory
 import           System.IO
 import           Text.Read (readMaybe)
+import           Network.HTTP.Types.Status (status404)
 
 
 -- type alias
@@ -32,5 +35,11 @@ cachedDownload cacheDir url = do
     else do
       createDirectoryIfMissing True cacheDir
       say $ "Fetching: " <> T.pack url
-      bytes <- simpleHttp url
-      BSL.writeFile path bytes
+      eBytes <- try $ simpleHttp url
+      case eBytes of
+        Left (e :: HttpException) -> case e of
+          HttpExceptionRequest _req (StatusCodeException response _bodyBeginning)
+            | responseStatus response == status404 -> do
+                say $ "Skipping 404-Not-Found URL: " <> T.pack url
+          _ -> throwIO e
+        Right bytes -> BSL.writeFile path bytes
