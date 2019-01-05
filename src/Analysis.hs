@@ -24,8 +24,8 @@ showText = T.pack . show
 runAnalysis :: IO ()
 runAnalysis = do
   let keywords =
-        [ "vr"
-        , "artificial intelligence"
+        [ "\"virtual reality\""
+        , "\"artificial intelligence\""
         ]
 
   -- First download all API results to build list of all articles
