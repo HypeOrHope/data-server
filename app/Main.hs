@@ -1,11 +1,7 @@
 module Main where
 
-import Types
-import GuardianApi
-import LoadArticles
-import Scraper
-import Server
+import qualified Analysis
 
 
 main :: IO ()
-main = putStrLn "Hello"
+main = Analysis.runAnalysis

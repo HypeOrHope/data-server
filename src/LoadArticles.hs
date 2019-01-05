@@ -4,8 +4,8 @@ import Text.Read (readMaybe)
 import System.IO
 import System.Directory
 import Network.HTTP.Conduit (simpleHttp)
+import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as BSL8
-import qualified Data.ByteString.Lazy as BL
 
 
 -- type alias
@@ -25,8 +25,5 @@ downloadHtml url = do
     createDirectoryIfMissing True "data/html"
     let path = makePath url
     handle <- openFile path WriteMode
-    BL.hPut handle bytes
+    BSL.hPut handle bytes
     hClose handle
-
-parseHtml = do
-    undefined

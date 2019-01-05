@@ -29,7 +29,8 @@ getAll :: Text.Text -> IO [Content]
 getAll keyword = do
   response <- callApi keyword 1
   let contents = results response
-  let callNumber = callcCallNumber (totalResults response) downloadPageSize
+  -- TODO: Re-enable downloading ALL articles
+  let callNumber = 1 -- callcCallNumber (totalResults response) downloadPageSize
   getAllHelper keyword 1 callNumber contents
 
 --          keyword  currentN totalN  bisherige
@@ -83,8 +84,8 @@ printArticle art = do
 ------------- Volständige Funktion zum Einlesen und Parsen--------------
 
 
-getArticleByKeyword :: String -> IO [ApiArticle]
-getArticleByKeyword key = do
+getArticlesByKeyword :: String -> IO [ApiArticle]
+getArticlesByKeyword key = do
   contents <- getAll (Text.pack key)
   let arts =  map hohFormat contents
   pure arts

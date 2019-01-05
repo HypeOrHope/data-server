@@ -5,7 +5,8 @@ module Scraper where
 import Text.Read (readMaybe)
 import System.IO
 import Network.HTTP.Conduit (simpleHttp)
--- import qualified Data.ByteString.Lazy as BSL
+import Data.ByteString (ByteString)
+import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import Text.HTML.DOM (parseLBS)
 import Text.XML.Cursor (Cursor, attributeIs, content, element, fromDocument, child,
@@ -29,6 +30,11 @@ getName cursor = cursor
     >=> child
     >=> checkName (`elem` ["p", "h2"])
   &// content
+
+runScraper :: ByteString -> [T.Text]
+runScraper page =
+  let cursor = fromDocument $ parseLBS (BSL.fromStrict page)
+  in getName cursor
 
 load = do
      cursor <- cursorFor url
