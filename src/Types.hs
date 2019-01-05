@@ -1,6 +1,5 @@
 module Types where
 
--- import Date.Dates (DateTime)
 
 data ApiArticle = ApiArticle
   { aid        :: String
@@ -8,7 +7,7 @@ data ApiArticle = ApiArticle
   , adate      :: String
   , asection   :: String
   , aurl       :: String
-  } deriving (Show, Read)
+  } deriving (Eq, Ord, Show, Read)
 
 
 data ArticleHtml = ArticleHtml

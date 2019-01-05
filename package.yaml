@@ -23,10 +23,12 @@ dependencies:
   - base >= 4.7 && < 5
   - async
   - bytestring
+  - containers
   - html-conduit
   - http-conduit
   - http-types
   - directory
+  - filepath
   - guardian-content-api-client
   - text
   - say

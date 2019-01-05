@@ -6,9 +6,12 @@ module Analysis where
 import           Data.ByteString (ByteString)
 import           Data.Foldable (for_)
 import qualified Data.ByteString as BS
+import qualified Data.Set as Set
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import           Say (say)
-import           System.Directory (doesFileExist)
+import           System.FilePath (takeDirectory)
+import           System.Directory (doesFileExist, createDirectoryIfMissing)
 import           UnliftIO.Async (pooledForConcurrentlyN, pooledForConcurrentlyN_)
 
 import           Downloads (makePath, cachedDownload)
@@ -21,6 +24,10 @@ showText :: (Show a) => a -> T.Text
 showText = T.pack . show
 
 
+deduplicate :: (Ord a) => [a] -> [a]
+deduplicate = Set.toList . Set.fromList
+
+
 runAnalysis :: IO ()
 runAnalysis = do
   let keywords =
@@ -30,19 +37,37 @@ runAnalysis = do
 
   -- First download all API results to build list of all articles
   -- to download before downloading any contents.
-  allArticles <- fmap concat $ pooledForConcurrentlyN 4 keywords $ \keyword -> do
+  allArticles <- fmap deduplicate . fmap concat $ pooledForConcurrentlyN 4 keywords $ \keyword -> do
     say $ "Downloading articles for keyword: " <> T.pack keyword
     getArticlesByKeyword keyword
 
   let numArticles = length allArticles
 
   -- Now, download all article contents.
-  pooledForConcurrentlyN_ 100 (zip [1..] allArticles) $ \(i, ApiArticle{ aurl }) -> do
+  pooledForConcurrentlyN_ 100 (zip [1..] allArticles) $ \(i, a@ApiArticle{ aurl }) -> do
 
     say $ "Progress: " <> showText i <> " / " <> showText numArticles
-    cachedDownload "data/html" aurl
+    mPage <- cachedDownload "data/html" aurl
 
-    -- page <- BS.readFile path
-    -- let texts = runScraper page
+    case mPage of
+      Nothing -> return ()
+      Just page -> do
+        let texts = runScraper page
 
-    -- print texts
+        let text = T.unlines texts
+
+        let path = "data/text/" ++ makePath aurl ++ ".txt"
+        createDirectoryIfMissing True (takeDirectory path)
+        T.writeFile path text
+
+
+        let ApiArticle{ atitle, adate, asection } = a
+
+        let metaPath = "data/meta/" ++ makePath aurl ++ ".txt"
+        createDirectoryIfMissing True (takeDirectory metaPath)
+        writeFile metaPath $ unlines
+          [ atitle
+          , adate
+          , asection
+          ]
+
